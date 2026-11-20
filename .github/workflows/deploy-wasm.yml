@@ -1,0 +1,21 @@
+name: Deploy wasm
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download release ZIP
+        run: curl -sL -o chief.zip https://github.com/AftabLatif/Chief-Zahid/releases/download/v0.1/chief-zahid-v0.1-web.zip
+      - name: Extract wasm
+        run: unzip -o chief.zip web/index.wasm && mv web/index.wasm ./index.wasm && rm -rf web chief.zip
+      - name: Commit wasm
+        run: |
+          git config user.name "AftabLatif"
+          git config user.email "aftabmunna0786@gmail.com"
+          git add index.wasm
+          git commit -m "Add index.wasm (39.5 MB) via release asset" || echo "nothing to commit"
+          git push
